@@ -15,6 +15,14 @@ resource "aws_s3_bucket" "media" {
   }
 }
 
+resource aws_s3_bucket_object "ob1" {
+  for_each = fileset("media/", "*")
+  bucket = aws_s3_bucket.media.id
+  key = each.value
+  source = "media/${each.value}"
+  etag = filemd5("media/${each.value}")
+}
+
 resource "aws_instance" "project-mars" {
   ami = "ami-0ca05c6eaa4ac40e0"
   instance_type = "t2.micro"
